@@ -33,9 +33,9 @@ function Login() {
     // Si no hubo error, el login fue exitoso → redirigimos al Dashboard.
     navigate('/')
   }
-
+//#FEEBE7  #FDF5E6
   return (
-    <div className="min-h-screen flex items-center justify-center bg-base-200">
+    <div className="min-h-screen flex items-center justify-center bg-[#FFFFE0]">
       <form
         onSubmit={handleLogin}
         className="card w-96 bg-base-100 shadow-xl p-8 flex flex-col gap-4"

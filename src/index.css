@@ -4,3 +4,16 @@
 /* Esta línea activa DaisyUI, que son componentes ya armados (botones, cards, tablas con estilo)
    construidos sobre las clases de Tailwind, para no diseñar cada cosa desde cero. */
 @plugin "daisyui";
+
+/* Sobreescribimos el color del botón primario de DaisyUI: ahora es negro en vez del azul/morado por defecto */
+.btn-primary {
+  background-color: #000000;
+  border-color: #000000;
+  color: #ffffff;
+}
+
+/* Un gris muy oscuro al pasar el mouse, para que se note el efecto hover sin perder la identidad negra */
+.btn-primary:hover {
+  background-color: #1f1f1f;
+  border-color: #1f1f1f;
+}

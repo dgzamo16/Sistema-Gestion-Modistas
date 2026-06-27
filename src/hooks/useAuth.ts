@@ -2,10 +2,20 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../services/supabaseClient'
 // "Session" es el tipo que Supabase usa para describir una sesión activa (usuario + token).
 import type { Session } from '@supabase/supabase-js'
+import { data } from 'react-router-dom'
+
+interface Perfil {
+  id: string
+  nombre: string
+  email: string
+  rol: string
+}
 
 export function useAuth() {
   // session guarda la sesión actual (o null si nadie ha iniciado sesión).
   const [session, setSession] = useState<Session | null>(null)
+  //para los perfiles
+  const [perfil, setPerfil] = useState<Perfil | null>(null)
   // cargando nos sirve para saber si todavía estamos revisando, y así no mostrar
   // "no hay sesión" por un instante antes de confirmar que sí la hay.
   const [cargando, setCargando] = useState(true)
@@ -32,6 +42,25 @@ export function useAuth() {
     }
   }, [])
 
+  //Cada vez que la sesion cambia (login, logout, carga inicial)
+  //buscamos en perfiles la fila que corresponde a ese usuario.
+  useEffect(() => {
+    if(!session) {
+      setPerfil(null)
+      return
+    }
+
+    supabase
+    .from('perfiles')
+    .select('*')
+    .eq('id', session.user.id)
+    //single() le dice a supabase que espera una fila.
+    .single()
+    .then(({ data }) => {
+      setPerfil(data)
+    }) 
+  }, [session] )
+
   // Devolvemos ambos valores para que cualquier componente pueda usarlos.
-  return { session, cargando }
+  return { session, perfil, cargando }
 }

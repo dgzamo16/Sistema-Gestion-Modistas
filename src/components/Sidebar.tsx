@@ -34,7 +34,7 @@ function Sidebar() {
   const location = useLocation()
 
   return (
-    <aside className="w-64 min-h-screen bg-base-100 border-r border-base-200 p-4">
+    <aside className="w-64 min-h-screen bg-[#FEEBE7] bg-base-100 border-r border-base-200 p-4">
       {/* Logo / nombre de la app, igual que en tu mockup */}
       <h2 className="text-xl font-bold mb-6 px-2">Atelier Manager</h2>
 
@@ -51,7 +51,8 @@ function Sidebar() {
                 // Si la opción está disponible, es un link normal y funcional.
                 <Link
                   to={item.ruta}
-                  className={esActivo ? 'active font-semibold' : ''}
+                  className={esActivo ? 'bg-white/40 font-semibold rounded-lg text-gray-900'
+                     : 'text-gray-800 hover:bg-white/25 rounded-lg'}
                 >
                   {item.nombre}
                 </Link>
@@ -60,7 +61,7 @@ function Sidebar() {
                 // mostramos texto deshabilitado con un badge "Próximamente".
                 <span className="opacity-40 cursor-not-allowed flex justify-between">
                   {item.nombre}
-                  <span className="badge badge-sm">Próximamente</span>
+                  <span className="badge badge-sm bg-white/40 text-gray-800 border-none">Próximamente</span>
                 </span>
               )}
             </li>
