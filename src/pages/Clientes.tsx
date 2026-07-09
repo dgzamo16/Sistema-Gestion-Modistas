@@ -8,6 +8,7 @@ import {
 } from '../services/clientesService'
 import { useAuth } from "../hooks/useAuth"
 import type { Cliente } from '../types'
+import { useNavigate } from 'react-router-dom'
 
 //poner el formulario vacio, para cuando se crea un cliente nuevo
 const clienteVacio = {
@@ -22,7 +23,7 @@ const clienteVacio = {
 function Clientes(){
   //sesion.user.id es lo que usaremos para el id de un nuevo usuario.
   const { session } = useAuth()
-
+  const navigate = useNavigate()
   const [clientes, setClientes] = useState<Cliente[]>([])
   const [cargando, setCargando] = useState(true)
   const [busqueda, setBusqueda] = useState('')
@@ -133,6 +134,10 @@ function Clientes(){
                 <td>{cliente.direccion}</td>
                 <td>{new Date(cliente.fecha_registro).toLocaleDateString()}</td>
                 <td className="flex gap-2">
+                  <button onClick={() => navigate(`/medidas/${cliente.id}`)} 
+                  className="btn btn-sm btn-ghost" >
+                  📏
+                  </button>
                   <button onClick={() => abrirModalEditar(cliente)} className="btn btn-sm btn-ghost">
                     ✏️
                   </button>

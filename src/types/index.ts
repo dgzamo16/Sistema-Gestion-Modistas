@@ -19,10 +19,10 @@ export interface Medida {
   busto: number | null
   cintura: number | null
   cadera: number | null
-  hombro: number | null
+  espalda: number | null
   largo_manga: number | null
-  largo_vestido: number | null
-  cuello: number | null
+  largo: number | null
+  escote: number | null
   tiro_delantero: number | null
   tiro_trasero: number | null
   talle_delantero: number | null
