@@ -18,3 +18,17 @@ export async function crearMedida(medida: Partial<Medida> & { cliente_id: string
     return {data, error}
 }
 
+// Trae todas las medidas de todos los clientes, uniendo con clientes para mostrar el nombre
+export async function getTodasLasMedidas() {
+  const { data, error } = await supabase
+    // Consultamos la vista en vez de la tabla directamente
+    .from('vista_ultima_medida_por_cliente')
+    .select(`
+      *,
+      clientes (
+        nombre
+      )
+    `)
+    .order('fecha', { ascending: false })
+  return { data, error }
+}

@@ -26,8 +26,11 @@ function App() {
         >
           <Route path="/" element={<Dashboard />} />
           <Route path="/clientes" element={<Clientes />} />
+          // Deja ambas rutas apuntando al mismo componente:
+          <Route path="/medidas" element={<Medidas />} />
           <Route path="/medidas/:clienteId" element={<Medidas />} />
           <Route path="/prendas" element={<Prendas />} />
+          <Route path="/prendas/:clienteId" element={<Prendas />} />
           <Route path="/pagos" element={<Pagos />} />
         </Route>
       </Routes>

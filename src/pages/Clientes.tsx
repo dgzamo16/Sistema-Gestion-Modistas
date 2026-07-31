@@ -138,6 +138,12 @@ function Clientes(){
                   className="btn btn-sm btn-ghost" >
                   📏
                   </button>
+                  <button
+                    onClick={() => navigate(`/prendas/${cliente.id}`)}
+                    className="btn btn-sm btn-ghost"
+                  >
+                    👗
+                  </button>
                   <button onClick={() => abrirModalEditar(cliente)} className="btn btn-sm btn-ghost">
                     ✏️
                   </button>

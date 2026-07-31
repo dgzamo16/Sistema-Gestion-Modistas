@@ -34,7 +34,7 @@ function Sidebar() {
   const location = useLocation()
 
   return (
-    <aside className="w-64 min-h-screen bg-[#FEEBE7] bg-base-100 border-r border-base-200 p-4">
+    <aside className="w-64 min-h-screen bg-base-100 border-r border-base-200 p-4">
       {/* Logo / nombre de la app, igual que en tu mockup */}
       <h2 className="text-xl font-bold mb-6 px-2">Atelier Manager</h2>
 

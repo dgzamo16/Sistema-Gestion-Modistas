@@ -1,9 +1,13 @@
 //importaciones
 import { useEffect, useState } from "react"
 import { useParams, useNavigate } from "react-router-dom"
-import { getMedidasPorCliente, crearMedida } from "../services/medidasService"
+import { getMedidasPorCliente, crearMedida, getTodasLasMedidas } from "../services/medidasService"
 import { supabase } from '../services/supabaseClient'
 import type { Medida, Cliente } from '../types'
+
+type MedidaConCliente = Medida & {
+  clientes?: { nombre: string }
+}
 
 // Creamos el form vacio para los campos de medidas
 const medidaVacia = {
@@ -12,7 +16,7 @@ const medidaVacia = {
   //seguimos con las demas.
   busto: '',
   espalda: '',
-  escote: ',',
+  escote: '',
   largo_manga:'',
   ancho_manga: '',
   largo_pinza: '',
@@ -34,7 +38,8 @@ function Medidas() {
   const navigate = useNavigate()
 
   const [cliente, setCliente] = useState<Cliente | null>(null)
-  const [medidas, setMedidas] = useState<Medida[]>([])
+  const esVistaGlobal = !clienteId
+  const [medidas, setMedidas] = useState<MedidaConCliente[]>([])
   const [cargando, setCargando] = useState(true)
   const [modalAbierto, setModalAbierto] = useState(false)
   const [formulario, setFormulario] = useState(medidaVacia)
@@ -42,15 +47,14 @@ function Medidas() {
   const [medidaDetalle, setMedidaDetalle] = useState<Medida | null>(null)
 
   useEffect(() => {
-    if (clienteId) {
-      cargarDatos()
-    }
-  }, [clienteId])
+  cargarDatos()
+}, [clienteId])
 
   async function cargarDatos() {
-    setCargando(true)
+  setCargando(true)
 
-    //cargamos el cliente para mostrar su nombre como title.
+  //cargamos el cliente para mostrar su nombre como title.
+  if (clienteId) {
     const { data: clienteData } = await supabase
       .from('clientes')
       .select('*')
@@ -59,10 +63,15 @@ function Medidas() {
     setCliente(clienteData)
 
     //cargarmos el historial de medidas.
-    const {data: medidasData} = await getMedidasPorCliente(clienteId!)
-    if (medidasData) setMedidas(medidasData as Medida[])
-      setCargando(false)
+    const { data: medidasData } = await getMedidasPorCliente(clienteId!)
+    if (medidasData) setMedidas(medidasData as MedidaConCliente[])
+  } else {
+    const { data: medidasData } = await getTodasLasMedidas()
+    if (medidasData) setMedidas(medidasData as MedidaConCliente[])
   }
+
+  setCargando(false)
+}
 
   //funcion de actualizar datos.
   function actualizarCampo(campo: string, valor: string) {
@@ -122,60 +131,74 @@ function Medidas() {
   if (cargando) return <p>Cargando...</p>
 
   return (
-    <div>
-      {/* Header con botón para volver a la lista de clientes */}
-      <div className="flex items-center gap-3 mb-6">
+  <div>
+    {/* Header */}
+    <div className="flex items-center gap-3 mb-6">
+      {!esVistaGlobal && (
         <button onClick={() => navigate('/clientes')} className="btn btn-sm btn-ghost">
           ← Volver
         </button>
-        <h1 className="text-2xl font-bold">
-          Medidas de {cliente?.nombre}
-        </h1>
+      )}
+      <h1 className="text-2xl font-bold">
+        {esVistaGlobal ? 'Todas las medidas' : `Medidas de ${cliente?.nombre}`}
+      </h1>
+      {!esVistaGlobal && (
         <button onClick={() => setModalAbierto(true)} className="btn btn-primary btn-sm ml-auto">
           + Nueva medida
         </button>
-      </div>
+      )}
+    </div>
 
-      {/* Lista de medidas registradas */}
-      {medidas.length === 0 ? (
-        <p className="text-gray-500">Aún no hay medidas registradas para este cliente.</p>
-      ) : (
-        <div className="overflow-x-auto">
-          <table className="table table-sm">
-            <thead>
-              <tr>
-                <th>Fecha</th>
-                <th>Busto</th>
-                <th>Cintura</th>
-                <th>Cadera</th>
-                <th>Espalda</th>
-                <th>Largo manga</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {medidas.map((medida) => (
-                <tr key={medida.id}>
-                  <td>{new Date(medida.fecha).toLocaleDateString()}</td>
-                  <td>{medida.busto ?? '—'}</td>
-                  <td>{medida.cintura ?? '—'}</td>
-                  <td>{medida.cadera ?? '—'}</td>
-                  <td>{medida.espalda ?? '—'}</td>
-                  <td>{medida.largo_manga ?? '—'}</td>
+    {medidas.length === 0 ? (
+      <p className="text-gray-500">Aún no hay medidas registradas.</p>
+    ) : (
+      <div className="overflow-x-auto">
+        <table className="table table-sm">
+          <thead>
+            <tr>
+              {esVistaGlobal && <th>Cliente</th>}
+              <th>Fecha</th>
+              <th>Busto</th>
+              <th>Cintura</th>
+              <th>Cadera</th>
+              <th>Espalda</th>
+              <th>Largo manga</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {medidas.map((medida) => (
+              <tr key={medida.id}>
+                {esVistaGlobal && (
                   <td>
                     <button
-                      onClick={() => setMedidaDetalle(medida)}
-                      className="btn btn-xs btn-ghost"
+                      onClick={() => navigate(`/medidas/${medida.cliente_id}`)}
+                      className="link link-hover font-medium"
                     >
-                      Ver detalle
+                      {medida.clientes?.nombre ?? '—'}
                     </button>
                   </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+                )}
+                <td>{new Date(medida.fecha).toLocaleDateString()}</td>
+                <td>{medida.busto ?? '—'}</td>
+                <td>{medida.cintura ?? '—'}</td>
+                <td>{medida.cadera ?? '—'}</td>
+                <td>{medida.espalda ?? '—'}</td>
+                <td>{medida.largo_manga ?? '—'}</td>
+                <td>
+                  <button
+                    onClick={() => setMedidaDetalle(medida)}
+                    className="btn btn-xs btn-ghost"
+                  >
+                    Ver detalle
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )}
 
       {/* Modal: formulario de nueva medida */}
       {modalAbierto && (
