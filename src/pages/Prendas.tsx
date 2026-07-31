@@ -145,6 +145,7 @@ function Prendas() {
   if (cargando) return <p>Cargando...</p>
 
   return (
+    <div>
     <div className="flex items-center gap-3 mb-6">
   {!esVistaGlobal && (
     <button onClick={() => navigate('/clientes')} className="btn btn-sm btn-ghost">
@@ -159,7 +160,7 @@ function Prendas() {
       + Nueva prenda
     </button>
   )}
-
+  </div> 
       {/* Filtros por estado */}
       <div className="flex gap-2 mb-4 flex-wrap">
         <button

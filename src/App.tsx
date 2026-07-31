@@ -32,6 +32,8 @@ function App() {
           <Route path="/prendas" element={<Prendas />} />
           <Route path="/prendas/:clienteId" element={<Prendas />} />
           <Route path="/pagos" element={<Pagos />} />
+          <Route path="/pagos" element={<Pagos />} />
+          <Route path="/pagos/:prendaId" element={<Pagos />} />
         </Route>
       </Routes>
     </BrowserRouter>
